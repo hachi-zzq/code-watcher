@@ -17,11 +17,10 @@ func main() {
 	repoBranch := AppConfig.AppConfig.RepoBranch
 	repoName := AppConfig.AppConfig.RepoName
 	c := cron.New(cron.WithSeconds())
-	c.AddFunc("*/10 * * * * *", func() {
+	c.AddFunc("*/15 * * * * *", func() {
 		hash := git.FetchRepo(repoBranch)
 		if hash == "" {
 			log.Println(fmt.Sprintf("branch: %s not found", repoBranch))
-
 			return
 		}
 		type Branch struct {
@@ -42,7 +41,7 @@ func main() {
 			b := Branch{}
 			scanErr := row.Scan(&b.id, &b.refs, &b.hash)
 			if scanErr == sql.ErrNoRows {
-				log.Println(fmt.Sprintf("fetch branch 12121: %s new refs: %s", repoBranch, hash))
+				log.Println(fmt.Sprintf("fetch branch: %s new refs: %s", repoBranch, hash))
 				//inert
 				if _, err := db.Exec("insert branches values (null, ? , ? , ?  )", repoName, repoBranch, hash); err != nil {
 					log.Println(err.Error())

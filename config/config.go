@@ -33,26 +33,26 @@ var AppConfig *Config = func() *Config {
 	}
 	viper.AutomaticEnv()
 	return &Config{
-		MySQLDSN:     viper.GetString("MySQLDSN"),
-		RepoUrl:      viper.GetString("RepoUrl"),
-		RepoName:     viper.GetString("RepoName"),
-		RepoUserName: viper.GetString("RepoUserName"),
-		RepoPassword: viper.GetString("RepoPassword"),
-		RepoBranch:   viper.GetString("RepoBranch"),
-		JenkinsUrl:   viper.GetString("JenkinsUrl"),
-		JenkinsName:  viper.GetString("JenkinsName"),
-		JenkinsToken: viper.GetString("JenkinsToken"),
+		MySQLDSN:     viper.GetString("MySQL_DSN"),
+		RepoUrl:      viper.GetString("REPO_URL"),
+		RepoName:     viper.GetString("REPO_NAME"),
+		RepoUserName: viper.GetString("REPO_USERNAME"),
+		RepoPassword: viper.GetString("REPO_PASSWORD"),
+		RepoBranch:   viper.GetString("REPO_BRANCH"),
+		JenkinsUrl:   viper.GetString("JENKINS_URL"),
+		JenkinsName:  viper.GetString("JENKINS_NAME"),
+		JenkinsToken: viper.GetString("JENKINS_TOKEN"),
 	}
 }()
 
 func setDefaultConfig() {
-	viper.SetDefault("MySQLDSN", "user:password@localhost:3306/dbname")
-	viper.SetDefault("RepoUrl", "http://localhost/test.git")
-	viper.SetDefault("RepoName", "coding-dev")
-	viper.SetDefault("RepoUserName", "")
-	viper.SetDefault("RepoPassword", "")
-	viper.SetDefault("RepoBranch", "test")
-	viper.SetDefault("JenkinsUrl", "http://localhost")
-	viper.SetDefault("JenkinsName", "test")
-	viper.SetDefault("JenkinsToken", "test")
+	viper.SetDefault("MySQL_DSN", "user:password@localhost:3306/dbname")
+	viper.SetDefault("REPO_URL", "http://localhost/test.git")
+	viper.SetDefault("REPO_NAME", "coding-dev")
+	viper.SetDefault("REPO_USERNAME", "")
+	viper.SetDefault("REPO_PASSWORD", "")
+	viper.SetDefault("REPO_BRANCH", "test")
+	viper.SetDefault("JENKINS_URL", "http://localhost")
+	viper.SetDefault("JENKINS_NAME", "test")
+	viper.SetDefault("JENKINS_TOKEN", "test")
 }

@@ -14,7 +14,6 @@ import (
 )
 
 func FetchRepo(repoName, branch string) string {
-	fmt.Printf(branch)
 	fs := osfs.New("git_storage/" + repoName + "_" + branch)
 	r, err := git.Init(filesystem.NewStorage(fs, cache.NewObjectLRUDefault()), nil)
 	if err != nil {
@@ -53,7 +52,7 @@ func FetchRepo(repoName, branch string) string {
 	}); err != nil {
 
 		if err == git.NoErrAlreadyUpToDate {
-			log.Printf("cc")
+			log.Printf("Already up to data..")
 		} else {
 			log.Fatalf(err.Error())
 		}

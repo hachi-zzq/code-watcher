@@ -14,6 +14,7 @@ import (
 )
 
 func main() {
+
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	repoBranch := AppConfig.AppConfig.RepoBranch
 	repoName := AppConfig.AppConfig.RepoName

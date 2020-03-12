@@ -14,11 +14,11 @@ import (
 )
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	repoBranch := AppConfig.AppConfig.RepoBranch
 	repoName := AppConfig.AppConfig.RepoName
 	c := cron.New(cron.WithSeconds())
 	c.AddFunc("*/15 * * * * *", func() {
-		log.Println(fmt.Printf("feting repo : %s,branch: %s，please wait...", repoName, repoBranch))
 		hash := git.FetchRepo(repoBranch)
 		if hash == "" {
 			log.Println(fmt.Sprintf("branch: %s not found", repoBranch))

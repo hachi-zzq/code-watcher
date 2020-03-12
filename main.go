@@ -14,20 +14,13 @@ import (
 )
 
 func main() {
-
-
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	repoBranch := AppConfig.AppConfig.RepoBranch
 	repoName := AppConfig.AppConfig.RepoName
-
-	fetchRepo(repoName, repoBranch)
-	return
-
 	c := cron.New(cron.WithSeconds())
-	c.AddFunc("*/1 * * * * *", func() {
+	c.AddFunc("*/10 * * * * *", func() {
 		fetchRepo(repoName, repoBranch)
 	})
-
 	c.Start()
 	for {
 		time.Sleep(time.Hour)

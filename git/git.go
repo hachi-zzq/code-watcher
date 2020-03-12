@@ -3,18 +3,26 @@ package git
 import (
 	AppConfig "coding.net/code-watcher/config"
 	"fmt"
+	"gopkg.in/src-d/go-billy.v4/osfs"
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/config"
 	"gopkg.in/src-d/go-git.v4/plumbing"
-	"gopkg.in/src-d/go-git.v4/storage/memory"
+	"gopkg.in/src-d/go-git.v4/plumbing/cache"
+	"gopkg.in/src-d/go-git.v4/storage/filesystem"
 	"log"
 	"regexp"
 )
 
-func FetchRepo(branch string) string {
-	r, err := git.Init(memory.NewStorage(), nil)
+func FetchRepo(repoName, branch string) string {
+	fmt.Printf(branch)
+	fs := osfs.New("git_storage/" + repoName + "_" + branch)
+	r, err := git.Init(filesystem.NewStorage(fs, cache.NewObjectLRUDefault()), nil)
 	if err != nil {
-		log.Fatalln(err.Error())
+		if err == git.ErrRepositoryAlreadyExists {
+			r, err = git.Open(filesystem.NewStorage(fs, cache.NewObjectLRUDefault()), nil)
+		} else {
+			log.Fatalln(err.Error())
+		}
 	}
 
 	repoUrl := AppConfig.AppConfig.RepoUrl
@@ -33,13 +41,23 @@ func FetchRepo(branch string) string {
 	})
 
 	if err != nil {
-		log.Fatalf(err.Error())
+		if err == git.ErrRemoteExists {
+			remote, _ = r.Remote("origin")
+		} else {
+			log.Fatalf(err.Error())
+		}
 	}
 
 	if err = r.Fetch(&git.FetchOptions{
 		RemoteName: remote.Config().Name,
 	}); err != nil {
-		log.Fatalf(err.Error())
+
+		if err == git.NoErrAlreadyUpToDate {
+			log.Printf("cc")
+		} else {
+			log.Fatalf(err.Error())
+		}
+
 	}
 
 	branchHash := ""

@@ -1,4 +1,4 @@
-package main
+package git
 
 import (
 	AppConfig "coding.net/code-watcher/config"

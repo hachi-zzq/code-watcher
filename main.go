@@ -2,11 +2,13 @@ package main
 
 import (
 	AppConfig "coding.net/code-watcher/config"
+	"coding.net/code-watcher/git"
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/parnurzeal/gorequest"
 	"github.com/robfig/cron/v3"
+
 	"log"
 	"time"
 )
@@ -15,10 +17,11 @@ func main() {
 	repoBranch := AppConfig.AppConfig.RepoBranch
 	repoName := AppConfig.AppConfig.RepoName
 	c := cron.New(cron.WithSeconds())
-	c.AddFunc("*/2 * * * * *", func() {
-		hash := FetchRepo(repoBranch)
+	c.AddFunc("*/10 * * * * *", func() {
+		hash := git.FetchRepo(repoBranch)
 		if hash == "" {
 			log.Println(fmt.Sprintf("branch: %s not found", repoBranch))
+
 			return
 		}
 		type Branch struct {

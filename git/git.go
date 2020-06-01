@@ -3,12 +3,12 @@ package git
 import (
 	AppConfig "coding.net/code-watcher/config"
 	"fmt"
-	"gopkg.in/src-d/go-billy.v4/osfs"
-	"gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/config"
-	"gopkg.in/src-d/go-git.v4/plumbing"
-	"gopkg.in/src-d/go-git.v4/plumbing/cache"
-	"gopkg.in/src-d/go-git.v4/storage/filesystem"
+	"github.com/go-git/go-billy/v5/osfs"
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/cache"
+	"github.com/go-git/go-git/v5/storage/filesystem"
 	"log"
 	"regexp"
 )
@@ -20,7 +20,7 @@ func FetchRepo(repoName, branch string) string {
 		if err == git.ErrRepositoryAlreadyExists {
 			r, err = git.Open(filesystem.NewStorage(fs, cache.NewObjectLRUDefault()), nil)
 		} else {
-			log.Fatalln(err.Error())
+			log.Panic(err.Error())
 		}
 	}
 
@@ -31,6 +31,7 @@ func FetchRepo(repoName, branch string) string {
 	if repoUsername != "" {
 		if r, err := regexp.Compile("(http://|https://)"); err == nil {
 			repoUrl = r.ReplaceAllString(repoUrl, fmt.Sprintf("%s%s:%s@", "${1}", repoUsername, repoPass))
+
 		}
 	}
 
@@ -38,6 +39,7 @@ func FetchRepo(repoName, branch string) string {
 		Name: "origin",
 		URLs: []string{repoUrl},
 	})
+
 
 	if err != nil {
 		if err == git.ErrRemoteExists {
@@ -47,26 +49,15 @@ func FetchRepo(repoName, branch string) string {
 		}
 	}
 
-	if err = r.Fetch(&git.FetchOptions{
-		RemoteName: remote.Config().Name,
-	}); err != nil {
-
-		if err == git.NoErrAlreadyUpToDate {
-			log.Printf("Already up to data..")
-		} else {
-			log.Fatalf(err.Error())
+	if refers,e := remote.List(&git.ListOptions{}); e != nil{
+		log.Panic(e)
+	}else {
+		for _,refer := range refers {
+			if  refer.Name() == plumbing.NewBranchReferenceName(branch) {
+				return refer.Hash().String()
+			}
 		}
-
 	}
 
-	branchHash := ""
-
-	if ref, err := r.Reference(plumbing.NewRemoteReferenceName(remote.Config().Name, branch), true); err == nil {
-		if ref != nil {
-			branchHash = ref.Hash().String()
-		}
-	} else {
-		log.Fatalf(err.Error())
-	}
-	return branchHash
+	return ""
 }
